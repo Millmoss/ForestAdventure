@@ -9,25 +9,29 @@ public class AbilityDictionary : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		float[] tempFloat = new float[7];
+		float[] tempFloat = new float[8];
+
 		for (int i = 0; i < tempFloat.Length; i++) {
 			tempFloat [i] = 0;
 		}
-		tempFloat [0] = 1;
-		Ability tempAbil = new Ability (0,0,0,"baseAttack",1,100,tempFloat,"damage");
+		tempFloat [0] = 0.25f;
+		tempFloat [7] = 1f;
+		Ability tempAbil = new Ability (0,0,0,"bluntSkill",1,9,tempFloat,"useWeapon","TempAssets/testingBluntSkill");
 		storedAbilities.Add (tempAbil.getName(), tempAbil);
 
 		for (int i = 0; i < tempFloat.Length; i++) {
 			tempFloat [i] = 0;
 		}
-		tempFloat [4] = 1;
-		tempAbil = new Ability (3,0,0,"baseSpell",5,125,tempFloat,"damage");
+		tempFloat [0] = 0.125f;
+		tempFloat [7] = 1f;
+		tempAbil = new Ability (0,0,0,"slashSkill",1,9,tempFloat,"useWeapon","TempAssets/testingSlashSkill");
 		storedAbilities.Add (tempAbil.getName(), tempAbil);
 
 		for (int i = 0; i < tempFloat.Length; i++) {
 			tempFloat [i] = 0;
 		}
-		tempAbil = new Ability (0,3,0,"baseHustle",3,0,tempFloat,"status");
+		tempFloat [7] = 1f;
+		tempAbil = new Ability (0,0,0,"pierceSkill",1,9,tempFloat,"useWeapon","TempAssets/testingPierceSkill");
 		storedAbilities.Add (tempAbil.getName(), tempAbil);
 	}
 

@@ -77,7 +77,7 @@ public class UnitStats : MonoBehaviour {
 		setUnitStats ();
 	}
 
-	/*
+	///*
 	private float strength;
     private float speed;
     private float dexterity;
@@ -321,4 +321,4 @@ public class UnitStats : MonoBehaviour {
 
 
 }
-*/
+//*/

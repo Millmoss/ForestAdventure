@@ -11,6 +11,10 @@ public class Weapon : Item {
 		descript = "desu";
 	}
 
+	public int getBaseDamage(){
+		return baseDamage;
+	}
+
 	public Weapon(string givenName, string givenDescript, int givenDamage, string givenImagePath){
 		name = givenName;
 		baseDamage = givenDamage;

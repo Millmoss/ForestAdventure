@@ -50,8 +50,7 @@ public class enemyAIOne : MonoBehaviour {
 
 	void loadAbilities(){
 		startingAbilities = new string[1];
-		//startingAbilities [0] = "baseSpell";
-		startingAbilities [0] = "baseAttack";
+		startingAbilities [0] = "bluntSkill";
 	}
 
 
@@ -76,7 +75,7 @@ public class enemyAIOne : MonoBehaviour {
 			nextUsage = Time.time + animationDelay;
 		}
 		if (Input.GetKeyDown (KeyCode.P)) {
-			sysHandl.activateAbility (unitStats.getUnitStatS (), startingAbilities [0], player.tileX, player.tileZ, unitStats.tileX, unitStats.tileZ);
+			sysHandl.activateAbility (startingAbilities [0], player.tileX, player.tileZ, unitStats.tileX, unitStats.tileZ);
 		}
 	}
 
@@ -85,7 +84,7 @@ public class enemyAIOne : MonoBehaviour {
 		int checkNum = getMaxMoveRange ();
 		if (checkNum != -1) {
 			startMovement();
-			sysHandl.activateAbility (unitStats.getUnitStatS (), startingAbilities [checkNum], player.tileX, player.tileZ, unitStats.tileX, unitStats.tileZ);
+			sysHandl.activateAbility (startingAbilities [checkNum], player.tileX, player.tileZ, unitStats.tileX, unitStats.tileZ);
 		} 
 	}
 

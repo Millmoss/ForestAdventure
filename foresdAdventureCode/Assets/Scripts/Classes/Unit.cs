@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Unit : MonoBehaviour {
 
@@ -28,14 +29,15 @@ public class Unit : MonoBehaviour {
 	private int slashAccuracy;
 	private int pierceAccuracy;
 	private int dodge; //dodge is subtracted directly from the enemy accuracy percentage, if enemy has 90 accuracy and player has 10 dodge, enemy will have 80 percent chance to hit
-	private int bluntDamage=0; //this is the amount of damage the player does atm, if needs buff, change weaponDamage in Start method
-	private int slashDamage=0; //at the moment, damage is flat for debugging purposes, once game works and stuff, damage will be something like (damage + random(.1f * damage, .4f * damage))
-	private int pierceDamage=0;
 
 	private int[] unitStats;
 	//this is done for like stuff and things e.g. skills
 
+	private Dictionary<string,Skill> skillDic;
+
 	//TODO: set up equipment via creating an 'equpitment' class and stuff. also create one for weapons
+
+	private int weaponDamage;
 
 	//status effects; this should be an enum but for now we're going to not do that because laz
 	private string curStatus; 
@@ -50,7 +52,6 @@ public class Unit : MonoBehaviour {
 
 	//other stats go here!
 
-
 	//this is for positional data
 	public Vector3 currentTileCoord;
 
@@ -63,8 +64,6 @@ public class Unit : MonoBehaviour {
 	void Start () {
 		unitHandler = eventSystem.GetComponent<SystemHandler> ();
 
-		print ("GIVEN IMAGE I S " + givenImage);
-
 		strength=24;
 		speed=20;
 		dexterity=26;
@@ -72,7 +71,7 @@ public class Unit : MonoBehaviour {
 		intelligence=22;
 		willpower=18;
 		luck=16;
-		unitStats = new int[7];
+		unitStats = new int[8];
 
 
 		setUnitStats ();
@@ -83,7 +82,24 @@ public class Unit : MonoBehaviour {
 		return type;
 	}
 
+	public void setSkillList(Dictionary<string,Skill> givenSkills){
+		skillDic = givenSkills;
+	}
+
+	public void setWeaponDamage(int x){
+		weaponDamage = x;
+		setUnitStats ();
+	}
+
+	public void addToSkill(string given, int num)
+	{
+		skillDic [given].addLevel (num);
+	}
+
 	void calculateOtherStats(){
+		weaponDamage = 1;
+		skillDic = new Dictionary<string, Skill> ();
+
 		health = (int)Mathf.Floor(100 * (constitution/20));
 		mana = (int)Mathf.Floor(25 * (((1.3f * willpower) + (.7f * intelligence)) / 40));
 		stamina = (int)Mathf.Floor(50 * ((strength + dexterity) / 40));
@@ -96,6 +112,7 @@ public class Unit : MonoBehaviour {
 		slashAccuracy = 90 + (dexterity / 2);
 		pierceAccuracy = 90 + dexterity;
 		dodge = (int)Mathf.Floor(((1.3f * dexterity) + (.7f * speed)) / 4);
+
 		curStatus = "";
 		setUnitStats ();
 	}
@@ -112,12 +129,22 @@ public class Unit : MonoBehaviour {
 		unitStats [4] = intelligence;
 		unitStats [5] = willpower;
 		unitStats [6] = luck;
+		unitStats [7] = weaponDamage;
+
 	}
 
 	public int getStrength()
 	{
 		return strength;
 	}
+
+
+	public int getSkillDicValue(string given){
+		if(skillDic.ContainsKey(given))
+			return skillDic [given].getLevel();
+		return 0;
+	}
+
 
 	public void addStrength(int add)
 	{
@@ -244,21 +271,6 @@ public class Unit : MonoBehaviour {
 	public int getDodge()
 	{
 		return dodge;
-	}
-
-	public int getBluntDamage()
-	{
-		return bluntDamage;
-	}
-
-	public int getSlashDamage()
-	{
-		return slashDamage;
-	}
-
-	public int getPierceDamage()
-	{
-		return pierceDamage;
 	}
 
 	public void addMaxHealth(int add)

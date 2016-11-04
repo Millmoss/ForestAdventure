@@ -32,12 +32,8 @@ public class PlayerScript : MonoBehaviour {
 	Ability[] AbilityList;
 	string[] startingAbilities;
 	SystemHandler systemHandlr;
+	SkillDictionary skillDic;
 
-	/*
-	Item weaponEquip;
-	Item hatEquip;
-	Armor chestEquip;
-	*/
 	Item[] equips;
 
 	Item[] ringEquip;
@@ -57,6 +53,7 @@ public class PlayerScript : MonoBehaviour {
 		abilityDic = eventSystem.GetComponent<AbilityDictionary> ();
 		itemDic = eventSystem.GetComponent<ItemDictionary> ();
 		systemHandlr = eventSystem.GetComponent<SystemHandler> ();
+		skillDic = eventSystem.GetComponent<SkillDictionary> ();
 
 		inventory = new Item[maxInventorySize];
 		for (int i = 0; i < maxInventorySize; i++) {
@@ -68,7 +65,7 @@ public class PlayerScript : MonoBehaviour {
 		equips[0] = itemDic.getItem("testingWeaponOne");
 		equips[1]= itemDic.getItem("testingHatOne");
 		equips [2] = itemDic.getItem ("testingArmorOne");
-
+		//set equipts
 
 		inventory [0] = itemDic.getItem ("testingWeaponTwo");
 		inventory [1] = itemDic.getItem ("testingWeaponThree");
@@ -77,20 +74,29 @@ public class PlayerScript : MonoBehaviour {
 
 		inventory [4] = itemDic.getItem ("testingHatTwo");
 
-
 		inventory [5] = itemDic.getItem ("testingArmorTwo");
-
-		startingAbilities = new string[3];
-		startingAbilities [0] = "baseAttack";
-		startingAbilities [1] = "baseSpell";
-		startingAbilities [2] = "baseHustle";
-
+		//set the inventory items
 
 		curMoves = new List<int>();
 
+		startingAbilities = new string[3];
+		startingAbilities [0] = "bluntSkill";
+		startingAbilities [1] = "slashSkill";
+		startingAbilities [2] = "pierceSkill";
+		//set the base abilities
+
 		InstantiateAbilities ();
+		InstantiateSkills ();
+
+		unitScript.addToSkill ("pierceSkill", 100);
+		//testing; set pierceskill way high
+
 		systemHandlr.resetPlayerInventoryPanels ();
 		updateUnitStats (false);
+	}
+
+	void InstantiateSkills(){
+		unitScript.setSkillList(skillDic.getAllSkills ());
 	}
 
 	void updateUnitStats(bool reset){
@@ -99,11 +105,13 @@ public class PlayerScript : MonoBehaviour {
 				unitScript.addMaxHealth (equips [i].getAddHealth ());
 			}
 			//rn just goes throguh the hp stuff and adds the heatlh
+			unitScript.setWeaponDamage(((Weapon)equips[0]).getBaseDamage());
 		} else {
 			for (int i = 1; i < 3; i++) {
 				unitScript.addMaxHealth (-(equips [i].getAddHealth ()));
 				//same as above, but removes it so we dont get INFINITE HEALTH
 			}
+			unitScript.setWeaponDamage(-((Weapon)equips[0]).getBaseDamage());
 		}
 		print (unitScript.getMaxHealth ());
 	}

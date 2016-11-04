@@ -154,6 +154,9 @@ public class SystemHandler : MonoBehaviour {
 				case "StaminaCost":
 					IndependentSkillPanels [i].transform.GetChild (j).GetComponent<Text> ().text = "SP: "+abilityList [i].getStaminaCost();
 					break;
+				case "AbilityIcon":
+					IndependentSkillPanels [i].transform.GetChild (j).GetComponent<Image> ().sprite = abilityList [i].getSprite ();
+					break;
 				}
 
 
@@ -190,6 +193,20 @@ public class SystemHandler : MonoBehaviour {
 			{
 				enableMouseCube ();
 				mouseScript.setCurAbility (givenPlayerScript.getAbilities()[0].getName ());
+				mouseScript.setGivenStats (playerScript.getUnitStatS ());
+				CloseSkillMenu ();
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha2))
+			{
+				enableMouseCube ();
+				mouseScript.setCurAbility (givenPlayerScript.getAbilities()[1].getName ());
+				mouseScript.setGivenStats (playerScript.getUnitStatS ());
+				CloseSkillMenu ();
+			}
+			else if(Input.GetKeyDown(KeyCode.Alpha3))
+			{
+				enableMouseCube ();
+				mouseScript.setCurAbility (givenPlayerScript.getAbilities()[2].getName ());
 				mouseScript.setGivenStats (playerScript.getUnitStatS ());
 				CloseSkillMenu ();
 			}
@@ -249,8 +266,9 @@ public class SystemHandler : MonoBehaviour {
 		return true;
 	}
 
-	public void activateAbility(int[] stats, string ability, float targetX, float targetZ, int curX, int curZ){
+	public void activateAbility(string ability, float targetX, float targetZ, int curX, int curZ){
 		Unit target = AllUnits[0].GetComponent<Unit>();
+		Unit caster = AllUnits [0].GetComponent<Unit> ();
 		bool correctTarget = false;
 		Ability used = abilityDic.getAbility (ability);
 		int range = used.getRange ();
@@ -267,15 +285,31 @@ public class SystemHandler : MonoBehaviour {
 			}
 		}
 
+		for (int i = 0; i < AllUnits.Length; i++) {
+			if ((int)curX == AllUnits [i].GetComponent<Unit> ().tileX) {
+				if ((int)curZ== AllUnits [i].GetComponent<Unit> ().tileZ) {
+					caster = AllUnits [i].GetComponent<Unit>();
+					break;
+				}
+			}
+		}
+
+		int[] stats = caster.getUnitStatS ();
+
+
 		if (correctTarget) {
 			print ("Using ability " + ability + " on target " + target.getName ());
-			if (used.getType () == "damage") {
-				target.addHealth (-used.getValue (stats, 0));
+			if (used.getType () == "useWeapon") {
+				target.addHealth (-used.getValue (stats, caster.getSkillDicValue(ability)));
+				print (-used.getValue (stats, caster.getSkillDicValue (ability)) + " is da damage");
 				//right now we assume all skill leves are 0
 				print("New target health is "+target.getHealth());
 			}
-			SetTargetPanelStats (target);
-			EnableTargetStatPanel ();
+
+			if (target.getName () != "Player") {
+				SetTargetPanelStats (target);
+				EnableTargetStatPanel ();
+			}
 		} else {
 			print ("Target " + target.getName () + " is out of range of ability " + ability + "'s range of " + range + "!");
 		}

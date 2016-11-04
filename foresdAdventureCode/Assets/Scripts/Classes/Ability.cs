@@ -2,23 +2,19 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class Ability{
+public class Ability : MonoBehaviour{
 
 	int manaCost;
 	int staminaCost;
 	int healthCost;
 	string name;
-	public Image skillImage;
+	public Sprite abilityImage;
 
 	int range;
 	int basePower;
 	float[] damageFormula;
 	string abilityForm;
-	//not enums becuase lazy; is damage/status/heal
-
-
-
-
+	//not enums becuase lazy; is useWeapon/notUseWeapon/status/heal
 
 	public Ability(){
 		manaCost = 0;
@@ -32,11 +28,11 @@ public class Ability{
 			damageFormula[i] = 0f;
 		}
 		damageFormula [0] = 1f;
-
+		abilityImage = Resources.Load<Sprite>("TempAssets/inventoryBackground");
 		abilityForm = "damage";
 	}
 
-	public Ability(int mana, int stamina, int health, string givenName, int givenRange, int givenBasePower, float[] givenFormula, string typeOfPower){
+	public Ability(int mana, int stamina, int health, string givenName, int givenRange, int givenBasePower, float[] givenFormula, string typeOfPower, string givenAbilityImage){
 		manaCost = mana;
 		staminaCost = stamina;
 		healthCost = health;
@@ -45,6 +41,7 @@ public class Ability{
 		damageFormula = givenFormula;
 		basePower = givenBasePower;
 		abilityForm = typeOfPower;
+		abilityImage = Resources.Load<Sprite>(givenAbilityImage);
 	}
 
 	/*
@@ -61,13 +58,22 @@ public class Ability{
 		return abilityForm;
 	}
 
+	public Sprite getSprite(){
+		return abilityImage;
+	}
+
 	public int getValue(int[] givenStats, int skillLevel)
 	{
-		float resultValue=(basePower+skillLevel);
-		for (int i = 0; i < 7; i++) {
-			resultValue += damageFormula [i] * givenStats[i];
+		float resultValue=0;
+		if (abilityForm == "useWeapon") {
+			resultValue = basePower+skillLevel;
+			for (int i = 0; i < 7; i++) {
+				resultValue += damageFormula [i] * givenStats [i];
+			}
+			resultValue /= 10;
+			resultValue *= givenStats [7];
 		}
-			
+		resultValue += skillLevel;
 		return (int)resultValue;
 		//right now we are assuming that the formula for damage is just (base+skilllevel)*stat modifiers.
 		//note that i ahve no idea what casting it does

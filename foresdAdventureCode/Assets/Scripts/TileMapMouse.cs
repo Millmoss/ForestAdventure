@@ -59,7 +59,8 @@ public class TileMapMouse : MonoBehaviour {
 		//thats for colliisons, now for mosuedown
 
 		if (Input.GetMouseButtonDown (0)&&selectionCube.activeSelf==true) {
-			systemScript.activateAbility(givenStats,curAbility,currentTileCoord.x - 0.5f,currentTileCoord.z - 0.5f,playerUnit.tileX, playerUnit.tileZ);
+			systemScript.activateAbility(curAbility,currentTileCoord.x - 0.5f,currentTileCoord.z - 0.5f,playerUnit.tileX, playerUnit.tileZ);
+
 			selectionCube.SetActive (false);
 			systemScript.beginToEndTurn ();
 		}
