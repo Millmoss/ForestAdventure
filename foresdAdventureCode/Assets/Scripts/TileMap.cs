@@ -12,7 +12,7 @@ public class TileMap : MonoBehaviour {
 	public int size_z=50;
 	public float tileSize=1.0f;
 
-	public Texture2D terrainTiles;
+	//public Texture2D terrainTiles;
 
 	public int tileResolution;
 
@@ -51,7 +51,7 @@ public class TileMap : MonoBehaviour {
 
 	//this cuts up the tiles into parts; is VERY important.
 	//notice that tileREsoultion MUST be the size of a single tile within the picture, or we're goingt o have a bad time lol
-	Color[][]  ChopUpTiles(){
+	/*Color[][]  ChopUpTiles(){
 		int numTilesPerRow = terrainTiles.width / tileResolution;
 		int numRows = terrainTiles.height / tileResolution;	
 	
@@ -64,9 +64,9 @@ public class TileMap : MonoBehaviour {
 			}
 		}
 		return tiles;
-	}
+	}*/
 
-	void BuildTexture() {
+	/*void BuildTexture() {
 
 		int texWidth = size_x * tileResolution;
 		int texHeight = size_z * tileResolution;
@@ -94,7 +94,7 @@ public class TileMap : MonoBehaviour {
 		MeshRenderer mesh_renderer = GetComponent<MeshRenderer> ();
 		mesh_renderer.sharedMaterials [0].mainTexture = texture;	
 
-	}
+	}*/
 
 	//this code checks throughout all of the given thingy i mean units and sees if the given coords are already inhabited!
 	public bool CheckIfAlreadyInhabited(int x, int z)
@@ -255,7 +255,7 @@ public class TileMap : MonoBehaviour {
 		mesh_filter.mesh = mesh;
 
 		//this is for a randomly generated texture
-		BuildTexture ();
+		//BuildTexture ();
 
 		//but, we can just use this code instead!
 		//BuildGrid();
