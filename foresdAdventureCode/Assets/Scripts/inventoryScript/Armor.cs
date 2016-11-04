@@ -3,8 +3,6 @@ using System.Collections;
 
 public class Armor : Item {
 
-	int addHealth;
-
 	public Armor(){
 		addHealth = 10;
 		name = "Angel Angst My";
@@ -17,6 +15,8 @@ public class Armor : Item {
 		descript = givenDescript;
 		imageRepresentation = Resources.Load<Sprite>(givenImagePath) as Sprite;
 	}
+
+
 
 	//we havemultiple types of armor:
 	/*

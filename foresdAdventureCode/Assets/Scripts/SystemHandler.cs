@@ -44,6 +44,9 @@ public class SystemHandler : MonoBehaviour {
 	int endTurn=0;
 	//0-false,1-true,2-finsihed.
 
+	Color normalInventoryColor = new Color();
+	Color selectedInventoryColor = new Color();
+
 	void Start () {
 		//right now curabilities is 4 because fuk u
 		playerScript = playerUnit.GetComponent<Unit> ();
@@ -51,23 +54,37 @@ public class SystemHandler : MonoBehaviour {
 		mouseScript = tileMap.GetComponent<TileMapMouse> ();
 		abilityDic = GetComponent<AbilityDictionary> ();
 		SetPlayerPanel ();
+
+		normalInventoryColor = playerInventoryPanels[0].color;
+		selectedInventoryColor = Color.red;
+
 	}
 		
 	public void resetPlayerInventoryPanels(){
 		for (int i = 0; i < 16; i++) {
 			playerInventoryPanels [i].sprite = givenPlayerScript.getPlayerInventory()[i].getImage();
 		}
-		playerEquipmentPanels[0] = givenPlayerScript.getP
-
+		playerEquipmentPanels [0].sprite = givenPlayerScript.getWeaponEquip ().getImage();
+		playerEquipmentPanels [1].sprite = givenPlayerScript.getHatEquip().getImage();
+		playerEquipmentPanels [2].sprite = givenPlayerScript.getChestEquip ().getImage();
+	//	playerEquipmentPanels [3].sprite = givenPlayerScript.getRingEquip ().getImage();
 
 	}
 
-	public void setInventoryPanelColor(int number, bool tint)
+	public void setInventoryPanelColor(int number, bool tint, bool isEquip)
 	{
-		if (tint)
-			playerInventoryPanels [number].color = Color.red;
-		else
-			playerInventoryPanels [number].color = Color.blue;
+		if (!isEquip) {
+			if (tint)
+				playerInventoryPanels [number].color = selectedInventoryColor;
+			else
+				playerInventoryPanels [number].color = normalInventoryColor;
+		} else {
+			if (tint)
+				playerEquipmentPanels [number].color = selectedInventoryColor;
+			else
+				playerEquipmentPanels [number].color = normalInventoryColor;
+
+		}
 	}
 
 	public void beginToEndTurn(){
@@ -88,14 +105,25 @@ public class SystemHandler : MonoBehaviour {
 		mouseCube.SetActive (false);
 	}
 
-	public void setInventoryTargetText(int number){
-		if (number != -1) {
-			selectedInventoryName.text = givenPlayerScript.getPlayerInventory () [number].getName ();
-			selectedInventoryDescription.text = givenPlayerScript.getPlayerInventory () [number].getDescript ();
-		} else {
+	public void setInventoryTargetText(int number, bool isEquip){
+
+		if (number == -1) {
 			selectedInventoryName.text = "";
 			selectedInventoryDescription.text = "";
+		} 
+		else if (!isEquip) {
+			selectedInventoryName.text = givenPlayerScript.getPlayerInventory () [number].getName ();
+			selectedInventoryDescription.text = givenPlayerScript.getPlayerInventory () [number].getDescript ();			
+		} else {
+			selectedInventoryName.text = givenPlayerScript.getEquips() [number].getName ();
+			selectedInventoryDescription.text = givenPlayerScript.getEquips () [number].getDescript ();
+
 		}
+	}
+
+	public void setInventoryInvalidTargetText(){
+		selectedInventoryDescription.text = "";
+		selectedInventoryName.text = "Invalid Move";
 	}
 
 	public void OpenSkillMenu(){

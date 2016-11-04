@@ -261,6 +261,22 @@ public class Unit : MonoBehaviour {
 		return pierceDamage;
 	}
 
+	public void addMaxHealth(int add)
+	{
+		maxHealth += add;
+		if (health> maxHealth)
+			health = maxHealth;
+		if (health <= 0)
+			curStatus= "dead";
+	}
+
+	public void addMaxMana(int add)
+	{
+		maxMana += add;
+		if (mana > maxMana)
+			mana = maxMana;
+	}
+
 	public void addHealth(int add)
 	{
 		health+= add;

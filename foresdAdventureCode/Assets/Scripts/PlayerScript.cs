@@ -8,6 +8,8 @@ public class PlayerScript : MonoBehaviour {
 
 	//this stuff might get refactored ventually so this only has the movement script and the data is on eventsystem....
 
+	//TODO: Rings. like rings everywhere.
+
 
 	//get the map function and the unithandler
 	public TileMap map;
@@ -31,9 +33,13 @@ public class PlayerScript : MonoBehaviour {
 	string[] startingAbilities;
 	SystemHandler systemHandlr;
 
+	/*
 	Item weaponEquip;
 	Item hatEquip;
 	Armor chestEquip;
+	*/
+	Item[] equips;
+
 	Item[] ringEquip;
 	//standard; ringEqip will eventaully have 10 or something like that
 
@@ -43,6 +49,8 @@ public class PlayerScript : MonoBehaviour {
 
 	bool isSelected=false;
 	int firstItemNumber;
+	int isEquip;
+	//if -1, its in inventory. else, corresponds to the equip.
 
 	void Start () {
 		unitScript = unitModel.GetComponent<Unit> ();
@@ -54,10 +62,23 @@ public class PlayerScript : MonoBehaviour {
 		for (int i = 0; i < maxInventorySize; i++) {
 			inventory [i] = new Item ();
 		}
-		chestEquip = new Armor ();
+
+		equips = new Item[3];
+
+		equips[0] = itemDic.getItem("testingWeaponOne");
+		equips[1]= itemDic.getItem("testingHatOne");
+		equips [2] = itemDic.getItem ("testingArmorOne");
 
 
-		inventory [6] = itemDic.getItem ("testingArmor");
+		inventory [0] = itemDic.getItem ("testingWeaponTwo");
+		inventory [1] = itemDic.getItem ("testingWeaponThree");
+		inventory [2] = itemDic.getItem ("testingWeaponFour");
+		inventory [3] = itemDic.getItem ("testingWeaponFive");
+
+		inventory [4] = itemDic.getItem ("testingHatTwo");
+
+
+		inventory [5] = itemDic.getItem ("testingArmorTwo");
 
 		startingAbilities = new string[3];
 		startingAbilities [0] = "baseAttack";
@@ -69,10 +90,46 @@ public class PlayerScript : MonoBehaviour {
 
 		InstantiateAbilities ();
 		systemHandlr.resetPlayerInventoryPanels ();
+		updateUnitStats (false);
+	}
+
+	void updateUnitStats(bool reset){
+		if (!reset) {
+			for (int i = 1; i < 3; i++) {
+				unitScript.addMaxHealth (equips [i].getAddHealth ());
+			}
+			//rn just goes throguh the hp stuff and adds the heatlh
+		} else {
+			for (int i = 1; i < 3; i++) {
+				unitScript.addMaxHealth (-(equips [i].getAddHealth ()));
+				//same as above, but removes it so we dont get INFINITE HEALTH
+			}
+		}
+		print (unitScript.getMaxHealth ());
+	}
+
+	public Armor getChestEquip(){
+		return (Armor)equips[2];
+	}
+
+	public Item getWeaponEquip(){
+		return equips[0];
+	}
+
+	public Item getHatEquip(){
+		return equips[1];
+	}
+
+	public Item[] getRingEquip(){
+		return ringEquip;
 	}
 
 	public Item[] getPlayerInventory(){
 		return inventory;
+	}
+
+	public Item[] getEquips(){
+		return equips;
 	}
 
 	void InstantiateAbilities(){
@@ -88,47 +145,120 @@ public class PlayerScript : MonoBehaviour {
 
 	public void equipArmor(int number)
 	{
-		if(isSelected){
+		//TODO: condense code
+		if (isSelected) {
 			switch (number) {
 			case 0:
+				if (inventory [firstItemNumber].GetType () == typeof(Weapon)) {
+					updateUnitStats (true);
+					Weapon tempArmor = (Weapon)equips [number];
+					equips [number] = (Weapon)inventory [firstItemNumber];
+					inventory [firstItemNumber] = tempArmor;
+					systemHandlr.setInventoryPanelColor (firstItemNumber, false, false);
+					isSelected = false;
+					systemHandlr.resetPlayerInventoryPanels ();
+					systemHandlr.setInventoryTargetText (-1, false);
+					updateUnitStats (false);
+				} else {
+					systemHandlr.setInventoryInvalidTargetText ();
+					isSelected = false;
+					systemHandlr.resetPlayerInventoryPanels ();
+					systemHandlr.setInventoryPanelColor (firstItemNumber, false, false);
+				}				
 				break;
 			case 1:
+				if (inventory [firstItemNumber].GetType () == typeof(Hat)) {
+					updateUnitStats (true);
+					Hat tempArmor = (Hat)equips [number];
+					equips [number] = (Hat)inventory [firstItemNumber];
+					inventory [firstItemNumber] = tempArmor;
+					systemHandlr.setInventoryPanelColor (firstItemNumber, false, false);
+					isSelected = false;
+					systemHandlr.resetPlayerInventoryPanels ();
+					systemHandlr.setInventoryTargetText (-1, false);
+					updateUnitStats (false);
+				} else {
+					systemHandlr.setInventoryInvalidTargetText ();
+					isSelected = false;
+					systemHandlr.resetPlayerInventoryPanels ();
+					systemHandlr.setInventoryPanelColor (firstItemNumber, false, false);
+				}						
 				break;
 			case 2:
 				if (inventory [firstItemNumber].GetType () == typeof(Armor)) {
-					Armor tempArmor = chestEquip;
-					chestEquip = (Armor)inventory [firstItemNumber];
+					updateUnitStats (true);
+					Armor tempArmor = (Armor)equips [number];
+					equips [number] = (Armor)inventory [firstItemNumber];
 					inventory [firstItemNumber] = tempArmor;
-					systemHandlr.setInventoryPanelColor (firstItemNumber, false);
+					systemHandlr.setInventoryPanelColor (firstItemNumber, false, false);
 					isSelected = false;
 					systemHandlr.resetPlayerInventoryPanels ();
-					systemHandlr.setInventoryTargetText (-1);
+					systemHandlr.setInventoryTargetText (-1, false);
+					updateUnitStats (false);
+				} else {
+					systemHandlr.setInventoryInvalidTargetText ();
+					isSelected = false;
+					systemHandlr.resetPlayerInventoryPanels ();
+					systemHandlr.setInventoryPanelColor (firstItemNumber, false, false);
 				}
 				break;
 			case 3:
 				break;
 
 			}
+		} else {
+			systemHandlr.setInventoryPanelColor (number, true, true);
+
+			firstItemNumber = number;
+
+			systemHandlr.setInventoryTargetText (number, true);
+
+			isSelected = true;
+			isEquip = number;
 		}
 	}
 
 	public void selectItemInInventory(int number){
 		if (isSelected == false) {
-			systemHandlr.setInventoryPanelColor (number, true);
+			systemHandlr.setInventoryPanelColor (number, true, false);
 			firstItemNumber = number;
-			systemHandlr.setInventoryTargetText (number);
+			systemHandlr.setInventoryTargetText (number,false);
 			isSelected = true;
+			isEquip = -1;
 		} else {
 			Item tempItem = inventory [number];
-			inventory [number] = inventory [firstItemNumber];
-			inventory [firstItemNumber] = tempItem;
-			systemHandlr.setInventoryPanelColor (firstItemNumber, false);
+
+			if (isEquip == -1) {
+				inventory [number] = inventory [firstItemNumber];
+				inventory [firstItemNumber] = tempItem;
+			} else if(isEquip!=3){
+				if(inventory[number].GetType() == equips[isEquip].GetType())
+				{
+					inventory [number] = equips[isEquip];
+
+					switch (isEquip) {
+					case 0:
+						equips[0] = tempItem;
+						break;
+					case 1:
+						equips[1] = tempItem;
+						break;
+					case 2:
+						equips[2] = (Armor)tempItem;
+						break;
+					case 3:
+						break;
+					}
+				}
+
+			}
+			systemHandlr.setInventoryPanelColor (firstItemNumber, false,false);
 			isSelected = false;
 			systemHandlr.resetPlayerInventoryPanels ();
-			systemHandlr.setInventoryTargetText (-1);
+			systemHandlr.setInventoryTargetText (-1,false);
 		}
 
-			
+
 	}
 
 	public void clearNumberofMoves(){
