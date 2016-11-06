@@ -59,6 +59,12 @@ public class Unit : MonoBehaviour {
 	//rn we'll get it via gameobject getComponent
 	public GameObject eventSystem;
 	SystemHandler unitHandler;
+    
+    bool xMoving = false;
+    bool zMoving = false;
+
+    public AudioSource moveSound;
+    private bool playedSound;
 
 	// Use this for initialization
 	void Start () {
@@ -72,7 +78,7 @@ public class Unit : MonoBehaviour {
 		willpower=18;
 		luck=16;
 		unitStats = new int[8];
-
+        playedSound = true;
 
 		setUnitStats ();
 		calculateOtherStats ();
@@ -375,19 +381,38 @@ public class Unit : MonoBehaviour {
 	}
 
 	void Update () {
-		//make sure that the object is at its given tileX/Y location.
-
-		//make sure that the object is at its given tileX/Y location.
-		if(currentTileCoord.x != tileX + 0.5f)
+        //make sure that the object is at its given tileX/Y location.
+		if(currentTileCoord.x != tileX + 0.5f && (currentTileCoord.x <= tileX + 0.5f - .01f || currentTileCoord.x >= tileX + 0.5f + .01f))
 		{
-			currentTileCoord.x = Mathf.Lerp(currentTileCoord.x, tileX + 0.5f, 10f * Time.deltaTime);
-		}
-		if(currentTileCoord.z != tileZ + 0.5f)
-		{
-			currentTileCoord.z = Mathf.Lerp(currentTileCoord.z, tileZ + 0.5f, 10f * Time.deltaTime);
-		}
-		transform.transform.position = currentTileCoord;
-	
-
+            if (!zMoving)
+            {
+                currentTileCoord.x = Mathf.Lerp(currentTileCoord.x, tileX + 0.5f, 10f * Time.deltaTime);
+                playedSound = false;
+                xMoving = true;
+            }
+        }
+        else
+        {
+            xMoving = false;
+        }
+        if (currentTileCoord.z != tileZ + 0.5f && (currentTileCoord.z <= tileZ + 0.5f - .01f || currentTileCoord.z >= tileZ + 0.5f + .01f))
+        {
+            if (!xMoving)
+            {
+                currentTileCoord.z = Mathf.Lerp(currentTileCoord.z, tileZ + 0.5f, 10f * Time.deltaTime);
+                playedSound = false;
+                zMoving = true;
+            }
+        }
+        else
+        {
+            zMoving = false;
+        }
+        if (!playedSound && !xMoving && !zMoving)
+        {
+            moveSound.Play();
+            playedSound = true;
+        }
+        transform.transform.position = currentTileCoord;
 	}
 }

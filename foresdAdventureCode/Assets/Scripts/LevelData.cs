@@ -39,8 +39,8 @@ public class LevelData : MonoBehaviour
                     }
                     else if (temp.Value.getObjectType() == 'E')
                     {
-                        Instantiate(enemy1);
-                        print("agh");
+                        //Instantiate(enemy1);
+                        //print("agh");
                     }
                     if (temp.Next != null)
                         temp = temp.Next;
